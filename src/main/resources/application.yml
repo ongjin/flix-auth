@@ -1,0 +1,32 @@
+server:
+    port: 8050
+    svrvlet:
+        encoding:
+            charset: UTF-8
+            force: true
+            force-response: true
+
+spring:
+    datasource:
+        url: jdbc:postgresql://localhost:5432/flix
+        username: dydwls140
+        password: "@astems1027"
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        hibernate:
+            ddl-auto: update
+        show-sql: true
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQLDialect
+    devtools:
+        restart:
+            enabled: true
+
+app:
+    jwt:
+        refreshExpirationMs: 604800000
+
+logging:
+    level:
+        "[org.springframework]": INFO

@@ -1,0 +1,4 @@
+2025-03-10 22:24:28.866  c.z.f.FlixAuthApplication - Starting FlixAuthApplication using Java 21.0.6 with PID 20848 (C:\workspace\flix\flix-auth\target\classes started by qlqla in C:\workspace\flix\flix-auth) 
+2025-03-10 22:24:28.869  c.z.f.FlixAuthApplication - No active profile set, falling back to 1 default profile: "default" 
+2025-03-10 22:24:28.892  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable 
+2025-03-10 22:24:28.892  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG' 
