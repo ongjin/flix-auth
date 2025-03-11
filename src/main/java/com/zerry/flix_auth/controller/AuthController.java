@@ -2,6 +2,7 @@ package com.zerry.flix_auth.controller;
 
 import com.zerry.flix_auth.model.AuthRequest;
 import com.zerry.flix_auth.model.AuthResponse;
+import com.zerry.flix_auth.response.ApiResponse;
 import com.zerry.flix_auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +27,9 @@ public class AuthController {
      * @return JWT 토큰을 포함한 응답
      */
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<ApiResponse<AuthResponse>> login(@RequestBody AuthRequest authRequest) {
         AuthResponse authResponse = authService.authenticate(authRequest.getUsername(), authRequest.getPassword());
-        return ResponseEntity.ok(authResponse);
+        return ResponseEntity.ok(ApiResponse.success(authResponse));
     }
 
 }

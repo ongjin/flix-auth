@@ -10,9 +10,30 @@ VALUES (2, 'ROLE_ADMIN', 'Administrator role');
 INSERT INTO users (id, username, password, email, enabled, created_at, updated_at)
 VALUES (
   1,
-  'user1',
-  '$2a$10$w3HHjxdx8ljO5TeOObdD3OGbWbbA2OP7uH.7KKPQQ.lYwfr/viDUW',
-  'user1@example.com',
+  'dydwls140',
+  '$2a$12$ClzHrKWEbVQUzGwHPO2TMeJ6HjpNlCy5yr2y/S81WaNVCZ7M2y8AW',
+  'dydwls140@example.com',
+  true,
+  CURRENT_TIMESTAMP,
+  CURRENT_TIMESTAMP
+);
+
+INSERT INTO users (id, username, password, email, enabled, created_at, updated_at)
+VALUES (
+  2,
+  'wh3821',
+  '$2a$12$l1J7ITi/OYbqzg7A8988a.hs9fxJ4MBad5blxwkAUM/UXBKGbi3.G',
+  'wh3821@example.com',
+  true,
+  CURRENT_TIMESTAMP,
+  CURRENT_TIMESTAMP
+);
+INSERT INTO users (id, username, password, email, enabled, created_at, updated_at)
+VALUES (
+  3,
+  'wls140',
+  '$2a$12$zpk1V.NhKIn3mDuBVmJo0uvo69E1Vw1XGZquplStfRbQYVv8xqbIC',
+  'wls140@example.com',
   true,
   CURRENT_TIMESTAMP,
   CURRENT_TIMESTAMP
@@ -22,3 +43,7 @@ VALUES (
 -- user1에게 ROLE_USER 부여 (role_id 1)
 INSERT INTO user_roles (user_id, role_id)
 VALUES (1, 1);
+INSERT INTO user_roles (user_id, role_id)
+VALUES (2, 2);
+INSERT INTO user_roles (user_id, role_id)
+VALUES (3, 2);

@@ -10,7 +10,7 @@ import java.util.Date;
  * JWT 토큰 생성 및 검증에 관련된 유틸리티 클래스입니다.
  */
 public class JwtUtil {
-    private static final String SECRET_KEY = "my-secret-key";
+    private static final String SECRET_KEY = "abc123qweDG";
     private static final long ACCESS_TOKEN_EXPIRATION = 3600000; // 1시간
 
     public static String generateToken(String username) {
