@@ -14,7 +14,7 @@ spring:
     application:
         name: auth-service
     datasource:
-        url: jdbc:postgresql://localhost:5432/flix-auth
+        url: jdbc:postgresql://localhost:5432/flix_auth
         username: dydwls140
         password: "@astems1027"
         driver-class-name: org.postgresql.Driver

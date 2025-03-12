@@ -26,6 +26,9 @@
 @REM   MVNW_USERNAME/MVNW_PASSWORD - user and password for downloading maven
 @REM   MVNW_VERBOSE - true: enable verbose log; others: silence the output
 @REM ----------------------------------------------------------------------------
+@echo off
+SET "JAVA_HOME=C:\Program Files\Java\jdk-17"
+SET "Path=%JAVA_HOME%\bin;%Path%"
 
 @IF "%__MVNW_ARG0_NAME__%"=="" (SET __MVNW_ARG0_NAME__=%~nx0)
 @SET __MVNW_CMD__=
