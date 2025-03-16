@@ -14,15 +14,14 @@ spring:
     application:
         name: auth-service
     datasource:
-        url: jdbc:postgresql://localhost:5432/flix_auth
+        url: jdbc:postgresql://postgres_auth:5432/flix
         username: dydwls140
         password: "@astems1027"
         driver-class-name: org.postgresql.Driver
     jpa:
         hibernate:
             # ddl-auto: update # 애플리케이션 시작 시 데이터베이스 스키마를 자동 업데이트합니다.
-            ddl-auto: none
-        show-sql: true
+            ddl-auto: update
         properties:
             hibernate:
                 dialect: org.hibernate.dialect.PostgreSQLDialect
