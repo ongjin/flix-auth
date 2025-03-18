@@ -25,6 +25,9 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
             RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
@@ -40,7 +43,7 @@ public class AuthServiceImpl implements AuthService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new InvalidCredentialsException("Invalid password credentials");
         }
-        String accessToken = JwtUtil.generateToken(username);
+        String accessToken = jwtUtil.generateToken(username, user.getId());
         var refreshToken = refreshTokenService.createRefreshToken(user);
         return new AuthResponse(accessToken, refreshToken.getToken());
     }
