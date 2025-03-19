@@ -1,41 +1,9 @@
-server:
-    port: 8050
-    svrvlet:
-        encoding:
-            charset: UTF-8
-            force: true
-            force-response: true
-
 spring:
-    security:
-        user:
-            name: admin
-            password: 1234
     application:
-        name: auth-service
-    datasource:
-        url: jdbc:postgresql://postgres_auth:5432/flix
-        username: dydwls140
-        password: "@astems1027"
-        driver-class-name: org.postgresql.Driver
-    jpa:
-        hibernate:
-            # ddl-auto: update # 애플리케이션 시작 시 데이터베이스 스키마를 자동 업데이트합니다.
-            ddl-auto: update
-        properties:
-            hibernate:
-                dialect: org.hibernate.dialect.PostgreSQLDialect
-    sql:
-        init:
-            mode: never
-    devtools:
-        restart:
-            enabled: true
-
-app:
-    jwt:
-        refreshExpirationMs: 604800000
-
-logging:
-    level:
-        "[org.springframework]": INFO
+        name: auth
+    config:
+        import: "configserver:http://localhost:8058"
+    cloud:
+        config:
+            profile: local # 사용할 프로필
+            label: main # Git 브랜치 (기본값: main)
