@@ -20,8 +20,8 @@ public class JwtUtil {
 
     public String generateToken(String username, Long userId) {
         return Jwts.builder()
-                .setSubject(username)
-                .addClaims(Map.of("userId", userId))
+                .setSubject(String.valueOf(userId))
+                .addClaims(Map.of("username", username))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY.getBytes())
