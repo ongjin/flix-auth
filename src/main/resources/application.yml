@@ -4,6 +4,13 @@ spring:
         name: auth
     profiles:
         active: local # 기본 프로필 설정
+    cloud:
+        config:
+            fail-fast: true
+            retry:
+                initial-interval: 1000
+                max-interval: 2000
+                max-attempts: 100
 
 ---
 # local 환경 설정
@@ -11,7 +18,7 @@ spring:
     config:
         activate:
             on-profile: local
-        import: configserver:http://${CONFIG_LOCAL_HOST}:${CONFIG_LOCAL_PORT}
+        import: optional:configserver:http://${CONFIG_LOCAL_HOST}:${CONFIG_LOCAL_PORT}
     cloud:
         config:
             profile: local
@@ -23,7 +30,7 @@ spring:
     config:
         activate:
             on-profile: dev
-        import: configserver:http://${CONFIG_DEV_HOST:dev-host}:${CONFIG_DEV_PORT}
+        import: optional:configserver:http://${CONFIG_DEV_HOST}:${CONFIG_DEV_PORT}
     cloud:
         config:
             profile: dev
@@ -35,7 +42,7 @@ spring:
     config:
         activate:
             on-profile: prod
-        import: configserver:http://${CONFIG_PROD_HOST:prod-host}:${CONFIG_PROD_PORT}
+        import: optional:configserver:http://${CONFIG_PROD_HOST}:${CONFIG_PROD_PORT}
     cloud:
         config:
             profile: prod
