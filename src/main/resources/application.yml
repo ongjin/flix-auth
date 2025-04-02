@@ -12,13 +12,17 @@ spring:
                 max-interval: 2000
                 max-attempts: 100
 
+session:
+    service:
+        url: ${SESSION_SERVICE_URL:http://localhost:8052}
+
 ---
 # local 환경 설정
 spring:
     config:
         activate:
             on-profile: local
-        import: optional:configserver:http://${CONFIG_LOCAL_HOST}:${CONFIG_LOCAL_PORT}
+        import: optional:configserver:http://${CONFIG_LOCAL_HOST:localhost}:${CONFIG_LOCAL_PORT:8058}
     cloud:
         config:
             profile: local
@@ -30,7 +34,7 @@ spring:
     config:
         activate:
             on-profile: dev
-        import: optional:configserver:http://${CONFIG_DEV_HOST}:${CONFIG_DEV_PORT}
+        import: optional:configserver:http://${CONFIG_DEV_HOST:config-server}:${CONFIG_DEV_PORT:8058}
     cloud:
         config:
             profile: dev
@@ -42,8 +46,13 @@ spring:
     config:
         activate:
             on-profile: prod
-        import: optional:configserver:http://${CONFIG_PROD_HOST}:${CONFIG_PROD_PORT}
+        import: optional:configserver:http://${CONFIG_PROD_HOST:config-server}:${CONFIG_PROD_PORT:8058}
     cloud:
         config:
             profile: prod
             label: main
+logging:
+    level:
+        org.springframework.cloud: DEBUG
+        org.springframework.security: DEBUG
+        com.zerry.auth: DEBUG
