@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.zerry</groupId>
-	<artifactId>flix-auth</artifactId>
+	<artifactId>auth</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>flix-auth</name>
-	<description>zerry-flix-auth</description>
+	<name>auth</name>
+	<description>zerry-auth</description>
 	<url/>
 	<licenses>
 		<license/>
