@@ -6,11 +6,14 @@ import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -27,6 +30,9 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
+                .claim("authorities", userDetails.getAuthorities().stream()
+                        .map(authority -> authority.getAuthority())
+                        .collect(Collectors.toList()))
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(jwtConfig.getSigningKey(), SignatureAlgorithm.HS512)
@@ -75,7 +81,11 @@ public class JwtTokenProvider {
                 .getBody();
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(claims.getSubject());
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        List<SimpleGrantedAuthority> authorities = ((List<String>) claims.get("authorities")).stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+
+        return new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
     }
 
     public long getAccessTokenExpirationTime() {

@@ -9,6 +9,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -28,6 +29,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(
+            MethodArgumentTypeMismatchException e) {
+        log.error("Method Argument Type Mismatch Exception: {}", e.getMessage());
+        String message = String.format("Invalid value '%s' for parameter '%s'. Expected type: %s",
+                e.getValue(), e.getName(), e.getRequiredType().getSimpleName());
+        ErrorResponse response = new ErrorResponse(
+                "INVALID_PARAMETER_TYPE",
+                message,
+                LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException e) {
         log.error("Bad Credentials Exception: {}", e.getMessage());
@@ -44,6 +58,16 @@ public class GlobalExceptionHandler {
         ErrorResponse response = new ErrorResponse(
                 "USER_NOT_FOUND",
                 "User not found with email: " + e.getMessage(),
+                LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException e) {
+        log.error("Resource Not Found Exception: {}", e.getMessage());
+        ErrorResponse response = new ErrorResponse(
+                "RESOURCE_NOT_FOUND",
+                e.getMessage(),
                 LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }

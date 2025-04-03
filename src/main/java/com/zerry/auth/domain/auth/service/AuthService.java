@@ -3,27 +3,33 @@ package com.zerry.auth.domain.auth.service;
 import com.zerry.auth.domain.auth.dto.LoginRequest;
 import com.zerry.auth.domain.auth.dto.SignupRequest;
 import com.zerry.auth.domain.auth.dto.TokenResponse;
+import com.zerry.auth.domain.auth.dto.UserResponse;
 import com.zerry.auth.domain.user.entity.Role;
+import com.zerry.auth.domain.user.entity.RoleEnum;
 import com.zerry.auth.domain.user.entity.User;
 import com.zerry.auth.domain.user.repository.RoleRepository;
 import com.zerry.auth.domain.user.repository.UserRepository;
 import com.zerry.auth.domain.user.service.CustomUserDetailsService;
 import com.zerry.auth.global.config.JwtConfig;
 import com.zerry.auth.global.exception.AuthException;
+import com.zerry.auth.global.exception.ResourceNotFoundException;
 import com.zerry.auth.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -93,6 +99,7 @@ public class AuthService {
         // 새로운 리프레시 토큰 생성 및 저장
         String refreshToken = generateRefreshToken();
         user.setRefreshToken(refreshToken);
+        user.setLastLoginAt(LocalDateTime.now());
         userRepository.save(user);
 
         String accessToken = jwtTokenProvider.generateAccessToken(authentication);
@@ -126,6 +133,57 @@ public class AuthService {
 
         user.removeRefreshToken();
         userRepository.save(user);
+    }
+
+    @Transactional
+    public void logout() {
+        SecurityContextHolder.clearContext();
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserResponse> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(this::convertToUserResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public UserResponse getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("User with ID %d not found", id)));
+        return convertToUserResponse(user);
+    }
+
+    @Transactional
+    public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new ResourceNotFoundException(String.format("User with ID %d not found", id));
+        }
+        userRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public UserResponse getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("User with email %s not found", email)));
+        return convertToUserResponse(user);
+    }
+
+    private UserResponse convertToUserResponse(User user) {
+        List<RoleEnum> roleEnums = user.getRoles().stream()
+                .map(role -> RoleEnum.valueOf(role.getName()))
+                .collect(Collectors.toList());
+
+        return UserResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .username(user.getUsername())
+                .roles(roleEnums)
+                .enabled(user.isEnabled())
+                .lastLoginAt(user.getLastLoginAt())
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
+                .build();
     }
 
     private String generateRefreshToken() {

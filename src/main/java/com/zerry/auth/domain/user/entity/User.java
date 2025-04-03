@@ -42,7 +42,10 @@ public class User {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @Column(name = "last_login_at")
+    private LocalDateTime lastLoginAt;
+
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     @Builder.Default
     private List<Role> roles = new ArrayList<>();
@@ -70,5 +73,9 @@ public class User {
 
     public void removeRefreshToken() {
         this.refreshToken = null;
+    }
+
+    public void setLastLoginAt(LocalDateTime lastLoginAt) {
+        this.lastLoginAt = lastLoginAt;
     }
 }
