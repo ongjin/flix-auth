@@ -137,6 +137,15 @@ public class AuthService {
 
     @Transactional
     public void logout() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            String email = authentication.getName();
+            userRepository.findByEmail(email)
+                    .ifPresent(user -> {
+                        user.removeRefreshToken();
+                        userRepository.save(user);
+                    });
+        }
         SecurityContextHolder.clearContext();
     }
 
