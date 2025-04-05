@@ -1,5 +1,6 @@
 package com.zerry.auth.domain.user.service;
 
+import com.zerry.auth.domain.user.entity.CustomUserDetails;
 import com.zerry.auth.domain.user.entity.User;
 import com.zerry.auth.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,20 +22,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        "User not found with email: " + email));
 
         List<SimpleGrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());
 
-        return org.springframework.security.core.userdetails.User
-                .withUsername(user.getEmail())
-                .password(user.getPassword())
-                .authorities(authorities)
-                .accountExpired(false)
-                .accountLocked(false)
-                .credentialsExpired(false)
-                .disabled(!user.isEnabled())
-                .build();
+        return CustomUserDetails.from(user, authorities);
     }
 }

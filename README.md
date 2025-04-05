@@ -43,7 +43,7 @@
     -   Response:
         ```json
         {
-            "success": true,
+            "status": "SUCCESS",
             "message": "User registered successfully",
             "data": null
         }
@@ -65,11 +65,13 @@
     -   Response:
         ```json
         {
-            "success": true,
+            "status": "SUCCESS",
             "message": "Login successful",
             "data": {
                 "accessToken": "string",
-                "refreshToken": "string"
+                "refreshToken": "string",
+                "userId": "number",
+                "username": "string"
             }
         }
         ```
@@ -86,7 +88,7 @@
     -   Response:
         ```json
         {
-            "success": true,
+            "status": "SUCCESS",
             "message": "Token refreshed successfully",
             "data": {
                 "accessToken": "string",
@@ -100,7 +102,7 @@
     -   Response:
         ```json
         {
-            "success": true,
+            "status": "SUCCESS",
             "message": "Logout successful",
             "data": null
         }
@@ -115,7 +117,7 @@
     -   Response:
         ```json
         {
-            "success": true,
+            "status": "SUCCESS",
             "message": "Users retrieved successfully",
             "data": [
                 {
@@ -139,7 +141,7 @@
     -   Response:
         ```json
         {
-            "success": true,
+            "status": "SUCCESS",
             "message": "User retrieved successfully",
             "data": {
                 "id": "number",
@@ -161,7 +163,7 @@
     -   Response:
         ```json
         {
-            "success": true,
+            "status": "SUCCESS",
             "message": "User deleted successfully",
             "data": null
         }
@@ -223,4 +225,43 @@
 
 ```bash
 ./mvnw test
+```
+
+## 프로젝트 구조
+
+```
+flix-auth/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/zerry/auth/
+│   │   │       ├── controller/
+│   │   │       │   └── AuthController.java
+│   │   │       ├── service/
+│   │   │       │   ├── AuthService.java
+│   │   │       │   └── AuthServiceImpl.java
+│   │   │       ├── repository/
+│   │   │       │   └── UserRepository.java
+│   │   │       ├── dto/
+│   │   │       │   ├── UserDto.java
+│   │   │       │   ├── LoginRequestDto.java
+│   │   │       │   └── SignupRequestDto.java
+│   │   │       ├── entity/
+│   │   │       │   └── User.java
+│   │   │       ├── config/
+│   │   │       │   ├── SecurityConfig.java
+│   │   │       │   └── JwtConfig.java
+│   │   │       ├── security/
+│   │   │       │   ├── JwtTokenProvider.java
+│   │   │       │   └── UserDetailsServiceImpl.java
+│   │   │       └── global/
+│   │   │           ├── exception/
+│   │   │           │   └── GlobalExceptionHandler.java
+│   │   │           └── dto/
+│   │   │               └── ApiResponse.java
+│   │   └── resources/
+│   │       └── application.yml
+│   └── test/
+├── Dockerfile
+└── pom.xml
 ```

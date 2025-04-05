@@ -1,6 +1,7 @@
 package com.zerry.auth.global.jwt;
 
 import com.zerry.auth.domain.user.service.CustomUserDetailsService;
+import com.zerry.auth.domain.user.entity.CustomUserDetails;
 import com.zerry.auth.global.config.JwtConfig;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +29,13 @@ public class JwtTokenProvider {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtConfig.getAccessTokenExpirationTime());
 
+        CustomUserDetails customUserDetails = (CustomUserDetails) userDetails;
+        Long userId = customUserDetails.getId();
+        String email = customUserDetails.getUsername();
+
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
+                .setSubject(String.valueOf(userId))
+                .claim("email", email)
                 .claim("authorities", userDetails.getAuthorities().stream()
                         .map(authority -> authority.getAuthority())
                         .collect(Collectors.toList()))
@@ -41,11 +47,14 @@ public class JwtTokenProvider {
 
     public String generateRefreshToken(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        CustomUserDetails customUserDetails = (CustomUserDetails) userDetails;
+        Long userId = customUserDetails.getId();
+
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtConfig.getRefreshTokenExpirationTime());
 
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
+                .setSubject(String.valueOf(userId))
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(jwtConfig.getSigningKey(), SignatureAlgorithm.HS512)
@@ -80,7 +89,11 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token)
                 .getBody();
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(claims.getSubject());
+        Long userId = Long.parseLong(claims.getSubject());
+        String email = claims.get("email", String.class);
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+
         List<SimpleGrantedAuthority> authorities = ((List<String>) claims.get("authorities")).stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
