@@ -9,6 +9,8 @@ import com.zerry.auth.domain.auth.service.AuthService;
 import com.zerry.auth.global.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthService authService;
+    @Autowired
+    private AuthService authService;
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<Void>> signup(@Valid @RequestBody SignupRequest request) {

@@ -1,5 +1,6 @@
 package com.zerry.auth.global.exception;
 
+import com.zerry.auth.global.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,76 +21,65 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(AuthException.class)
-    public ResponseEntity<ErrorResponse> handleAuthException(AuthException e) {
+    public ResponseEntity<ApiResponse<Void>> handleAuthException(AuthException e) {
         log.error("Auth Exception: {}", e.getMessage());
-        ErrorResponse response = new ErrorResponse(
-                e.getCode(),
-                e.getMessage(),
-                LocalDateTime.now());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponse.error(e.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(
+    public ResponseEntity<ApiResponse<Void>> handleMethodArgumentTypeMismatchException(
             MethodArgumentTypeMismatchException e) {
         log.error("Method Argument Type Mismatch Exception: {}", e.getMessage());
         String message = String.format("Invalid value '%s' for parameter '%s'. Expected type: %s",
                 e.getValue(), e.getName(), e.getRequiredType().getSimpleName());
-        ErrorResponse response = new ErrorResponse(
-                "INVALID_PARAMETER_TYPE",
-                message,
-                LocalDateTime.now());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(message));
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException e) {
+    public ResponseEntity<ApiResponse<Void>> handleBadCredentialsException(BadCredentialsException e) {
         log.error("Bad Credentials Exception: {}", e.getMessage());
-        ErrorResponse response = new ErrorResponse(
-                "INVALID_CREDENTIALS",
-                "Invalid email or password",
-                LocalDateTime.now());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponse.error("Invalid email or password"));
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException e) {
+    public ResponseEntity<ApiResponse<Void>> handleUsernameNotFoundException(UsernameNotFoundException e) {
         log.error("Username Not Found Exception: {}", e.getMessage());
-        ErrorResponse response = new ErrorResponse(
-                "USER_NOT_FOUND",
-                "User not found with email: " + e.getMessage(),
-                LocalDateTime.now());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error("User not found with email: " + e.getMessage()));
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException e) {
+    public ResponseEntity<ApiResponse<Void>> handleResourceNotFoundException(ResourceNotFoundException e) {
         log.error("Resource Not Found Exception: {}", e.getMessage());
-        ErrorResponse response = new ErrorResponse(
-                "RESOURCE_NOT_FOUND",
-                e.getMessage(),
-                LocalDateTime.now());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error(e.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        return ResponseEntity.badRequest().body(errors);
+        return ResponseEntity.badRequest()
+                .body(ApiResponse.<Map<String, String>>builder()
+                        .status("ERROR")
+                        .message("Validation failed")
+                        .data(errors)
+                        .timestamp(LocalDateTime.now())
+                        .build());
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGlobalException(Exception e) {
+    public ResponseEntity<ApiResponse<Void>> handleGlobalException(Exception e) {
         log.error("Unexpected Exception: {}", e.getMessage());
-        ErrorResponse response = new ErrorResponse(
-                "INTERNAL_SERVER_ERROR",
-                "An unexpected error occurred",
-                LocalDateTime.now());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error("An unexpected error occurred"));
     }
 }
