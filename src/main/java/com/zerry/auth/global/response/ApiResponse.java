@@ -1,4 +1,4 @@
-package com.zerry.auth.global.dto;
+package com.zerry.auth.global.response;
 
 import java.time.LocalDateTime;
 

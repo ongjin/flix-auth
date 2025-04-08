@@ -6,7 +6,8 @@ import com.zerry.auth.domain.auth.dto.TokenResponse;
 import com.zerry.auth.domain.auth.dto.RefreshTokenRequest;
 import com.zerry.auth.domain.auth.dto.UserResponse;
 import com.zerry.auth.domain.auth.service.AuthService;
-import com.zerry.auth.global.dto.ApiResponse;
+import com.zerry.auth.global.response.ApiResponse;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
